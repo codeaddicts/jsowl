@@ -1,0 +1,38 @@
+// Main entry point
+def main {
+	let fx = new TestingFramework ();
+	fx.createTest ("Equality", lambda { return 1 == 1; }, true);
+	fx.createTest ("Bitwise or", lambda { return 0x02 | 0x20; }, "34");
+	fx.createTest ("Bitwise and", lambda { return 0x22 & 0x20; }, "32");
+	fx.createTest ("Classes", lambda
+	{
+		class sample {
+			public def Hello { return Say ("Hello, World!"); }
+			def Say (something) { return something; }
+		}
+		let x = new sample ();
+		return x.Hello ();
+	}, "Hello, World!");
+}
+
+// A small testing class
+class TestingFramework {
+	public def createTest (name, func, expected) {
+		log ("Testing: " + name);
+		log ("| Expected: " + expected);
+		let result = func ();
+		log ("| Computed: " + result);
+		if (expected == result) {
+			log ("| Test passed");
+		} else {
+			log ("| Test failed");
+		}
+	}
+}
+
+// A function which allows us to append
+// text to the html document
+def log (msg) {
+	let elem = document.getElementById ("results");
+	elem.innerHTML = elem.innerHTML + msg + "<br/>";
+}

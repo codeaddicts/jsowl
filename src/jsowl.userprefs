@@ -1,0 +1,36 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" ActiveRuntime="MS.NET" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="jsowl\Program.cs">
+    <Files>
+      <File FileName="jsowl\Program.cs" Line="15" Column="15" />
+      <File FileName="libjsowl\Lexer.cs" Line="18" Column="18" />
+      <File FileName="libjsowl\CodeGen.cs" Line="8" Column="8" />
+      <File FileName="libjsowl\Beautifier.cs" Line="3" Column="3" />
+      <File FileName="libjsowl\Compiler.cs" Line="33" Column="33" />
+      <File FileName="libjsowl\CompilerOptions.cs" Line="42" Column="42" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="jsowl" expanded="True">
+            <Node name="Program.cs" selected="True" />
+          </Node>
+          <Node name="libjsowl" expanded="True">
+            <Node name="External" expanded="True" />
+            <Node name="Mappings" expanded="True" />
+            <Node name="Syntax" expanded="True">
+              <Node name="Arithmetics" expanded="True">
+                <Node name="Bitwise" expanded="True" />
+              </Node>
+              <Node name="Brackets" expanded="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

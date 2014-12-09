@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{70F6F984-CDE0-494B-B8AA-158D586CFE0F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>libjsowl</RootNamespace>
+    <AssemblyName>libjsowl</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Lexer.cs" />
+    <Compile Include="Syntax\Token.cs" />
+    <Compile Include="Syntax\TIdent.cs" />
+    <Compile Include="Syntax\TString.cs" />
+    <Compile Include="Syntax\TEOF.cs" />
+    <Compile Include="Syntax\TEOL.cs" />
+    <Compile Include="Syntax\TSemi.cs" />
+    <Compile Include="Syntax\TComma.cs" />
+    <Compile Include="Syntax\TColon.cs" />
+    <Compile Include="Syntax\TDot.cs" />
+    <Compile Include="Mappings\Mapping.cs" />
+    <Compile Include="Mappings\Mapping.Linq.cs" />
+    <Compile Include="CodeGen.cs" />
+    <Compile Include="Beautifier.cs" />
+    <Compile Include="Syntax\TComment.cs" />
+    <Compile Include="External\JSBeautify.cs" />
+    <Compile Include="Syntax\TMultilineComment.cs" />
+    <Compile Include="Syntax\TNumber.cs" />
+    <Compile Include="Compiler.cs" />
+    <Compile Include="CompilerOptions.cs" />
+    <Compile Include="ITerminatable.cs" />
+    <Compile Include="TerminationCallback.cs" />
+    <Compile Include="Syntax\Arithmetics\TArDiv.cs" />
+    <Compile Include="Syntax\Arithmetics\TArMinus.cs" />
+    <Compile Include="Syntax\Arithmetics\TArMul.cs" />
+    <Compile Include="Syntax\Arithmetics\TArPlus.cs" />
+    <Compile Include="Syntax\Arithmetics\TAssign.cs" />
+    <Compile Include="Syntax\Arithmetics\Bitwise\TBitAnd.cs" />
+    <Compile Include="Syntax\Arithmetics\Bitwise\TBitOr.cs" />
+    <Compile Include="Syntax\Arithmetics\Bitwise\TBitShL.cs" />
+    <Compile Include="Syntax\Arithmetics\Bitwise\TBitShR.cs" />
+    <Compile Include="Syntax\Brackets\TBrL.cs" />
+    <Compile Include="Syntax\Brackets\TBrR.cs" />
+    <Compile Include="Syntax\Brackets\TCBrL.cs" />
+    <Compile Include="Syntax\Brackets\TCBrR.cs" />
+    <Compile Include="Syntax\Brackets\TParL.cs" />
+    <Compile Include="Syntax\Brackets\TParR.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Syntax\" />
+    <Folder Include="CoreLib\" />
+    <Folder Include="Mappings\" />
+    <Folder Include="External\" />
+    <Folder Include="Syntax\Arithmetics\" />
+    <Folder Include="Syntax\Arithmetics\Bitwise\" />
+    <Folder Include="Syntax\Arithmetics\Logical\" />
+    <Folder Include="Syntax\Brackets\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CoreLib\libclass.js" />
+  </ItemGroup>
+</Project>
