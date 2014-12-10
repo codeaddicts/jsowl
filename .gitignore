@@ -6,6 +6,6 @@
 *.back
 *.ncb
 *.log
-.userprefs
+*.userprefs
 *.DS_Store
 [Tt]humbs.db
