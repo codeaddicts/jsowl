@@ -1,5 +1,7 @@
+[Dd]ebug
+[Rr]eleae
 [Oo]bj
-[Bb]in
+src/[Bb]in
 *.user
 *.suo
 *.[Cc]ache
