@@ -2,9 +2,9 @@
 
 namespace libjsowl
 {
-	public class TArPlus : Token
+	public class TArAdd : Token
 	{
-		public TArPlus (int line) : base (line, "Arithmetic addition operator")
+		public TArAdd (int line) : base (line, "Addition")
 		{
 		}
 

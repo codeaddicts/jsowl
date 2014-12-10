@@ -2,9 +2,9 @@
 
 namespace libjsowl
 {
-	public class TArMinus : Token
+	public class TArSub : Token
 	{
-		public TArMinus (int line) : base (line, "Arithmetic subtraction operator")
+		public TArSub (int line) : base (line, "Subtraction")
 		{
 		}
 

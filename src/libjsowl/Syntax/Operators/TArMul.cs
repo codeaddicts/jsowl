@@ -4,7 +4,7 @@ namespace libjsowl
 {
 	public class TArMul : Token
 	{
-		public TArMul (int line) : base (line, "Arithmetic multiplication operator")
+		public TArMul (int line) : base (line, "Multiplication")
 		{
 		}
 

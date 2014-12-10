@@ -187,12 +187,21 @@ namespace libjsowl
 
 				// Arithmetics
 				else if (
-					tokens [i] is TArPlus ||
-					tokens [i] is TArMinus ||
+					tokens [i] is TArAdd ||
+					tokens [i] is TArSub ||
 					tokens [i] is TArMul ||
-					tokens [i] is TArDiv
+					tokens [i] is TArDiv ||
+					tokens [i] is TArMod
 				) {
 					output += string.Format (" {0} ", tokens [i].ToString ());
+				}
+
+				// Increment, decrement
+				else if (
+					tokens [i] is TArInc ||
+					tokens [i] is TArDec
+				) {
+					output += string.Format ("{0}", tokens [i].ToString ());
 				}
 
 				// Bitwise arithmetics
@@ -200,19 +209,46 @@ namespace libjsowl
 					tokens [i] is TBitAnd ||
 					tokens [i] is TBitOr ||
 					tokens [i] is TBitShL ||
-					tokens [i] is TBitShR
+					tokens [i] is TBitShR ||
+					tokens [i] is TBitXor ||
+					tokens [i] is TBitNot
 				) {
 					output += string.Format (" {0} ", tokens [i].ToString ());
 				}
 
-				// Assignment
-				else if (tokens [i] is TAssign) {
-					if (tokens [i + 1] is TAssign) {
-						++i;
-						output += "==";
-					}
-					else
-						output += string.Format (" {0} ", tokens [i].ToString ());
+				// Logical stuff
+				else if (
+					tokens [i] is TLogAnd ||
+					tokens [i] is TLogOr ||
+					tokens [i] is TLogGt ||
+					tokens [i] is TLogGtE ||
+					tokens [i] is TLogLt ||
+					tokens [i] is TLogLtE ||
+					tokens [i] is TLogNot ||
+					tokens [i] is TLogEq ||
+					tokens [i] is TLogNeq ||
+					tokens [i] is TLogSeq ||
+					tokens [i] is TLogNSeq
+				) {
+					output += string.Format (" {0} ", tokens [i].ToString ());
+				}
+
+				// Assignments
+				else if (
+					tokens [i] is TAssign ||
+					tokens [i] is TAsAdd ||
+					tokens [i] is TAsSub ||
+					tokens [i] is TAsMul ||
+					tokens [i] is TAsDiv ||
+					tokens [i] is TAsAnd ||
+					tokens [i] is TAsOr ||
+					tokens [i] is TAsShL ||
+					tokens [i] is TAsShR ||
+					tokens [i] is TAsNot ||
+					tokens [i] is TAsXor ||
+					tokens [i] is TAsMod
+				) {
+					output += string.Format (" {0} ", tokens [i].ToString ());
 				}
 
 				// Brackets, Parenthesis, Braces

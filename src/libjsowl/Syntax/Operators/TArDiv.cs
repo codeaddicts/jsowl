@@ -4,7 +4,7 @@ namespace libjsowl
 {
 	public class TArDiv : Token
 	{
-		public TArDiv (int line) : base (line, "Arithmetic division operator")
+		public TArDiv (int line) : base (line, "Division")
 		{
 		}
 

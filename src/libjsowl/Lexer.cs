@@ -9,7 +9,7 @@ using log = System.Console;
 namespace libjsowl
 {
 	/// <summary>
-	/// The jsOwl tokenizer
+	/// The jsowl tokenizer
 	/// </summary>
 	public class Lexer : ITerminatable
 	{
@@ -85,7 +85,7 @@ namespace libjsowl
 			string[] lines = src.Split (new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
 			for (int i = 0; i < lines.Length; i++) {
 				if (lines [i].TrimStart ().StartsWith ("#")) {
-					string[] directive = lines [i].Trim ().Split (' ');
+					string[] directive = lines [i].Trim ().Remove (0, 1).Split (' ');
 
 					switch (directive [0]) {
 
@@ -154,14 +154,20 @@ namespace libjsowl
 						Consume ();
 						tokens.Add (new TDot (line));
 						break;
+
+					// Comma operator
 					case ',':
 						Consume ();
 						tokens.Add (new TComma (line));
 						break;
+					
+					// End of instruction
 					case ';':
 						Consume ();
 						tokens.Add (new TSemi (line));
 						break;
+					
+					// Grouping operators
 					case '(':
 						Consume ();
 						tokens.Add (new TParL (line));
@@ -172,6 +178,8 @@ namespace libjsowl
 						tokens.Add (new TParR (line));
 						LogToken ();
 						break;
+					
+					// Brackets
 					case '{':
 						Consume ();
 						tokens.Add (new TCBrL (line));
@@ -192,51 +200,300 @@ namespace libjsowl
 						tokens.Add (new TBrR (line));
 						LogToken ();
 						break;
+					
+					// Assignment operator
 					case '=':
 						Consume ();
-						tokens.Add (new TAssign (line));
+
+						// Equals operator
+						if (PeekChar () == '=') {
+							Consume ();
+
+							// Strict equals operator
+							if (PeekChar () == '=') {
+								Consume ();
+								tokens.Add (new TLogSeq (line));
+							}
+
+							// Equals operator
+							else {
+								tokens.Add (new TLogEq (line));
+							}
+						}
+
+						// Assignment operator
+						else {
+							tokens.Add (new TAssign (line));
+						}
+
 						LogToken ();
 						break;
+					
+					// Addition
 					case '+':
 						Consume ();
-						tokens.Add (new TArPlus (line));
+
+						// Addition w/ assignment
+						if (PeekChar () == '=') {
+							Consume ();
+							tokens.Add (new TAsAdd (line));
+						}
+
+						// Increment
+						else if (PeekChar () == '+') {
+							Consume ();
+							tokens.Add (new TArInc (line));
+						}
+
+						// Addition
+						else {
+							tokens.Add (new TArAdd (line));
+						}
+
 						LogToken ();
 						break;
+					
+					// Subtraction
 					case '-':
 						Consume ();
-						tokens.Add (new TArMinus (line));
+
+						// Subtraction w/ assignment
+						if (PeekChar () == '=') {
+							Consume ();
+							tokens.Add (new TAsSub (line));
+						}
+
+						// Decrement
+						else if (PeekChar () == '-') {
+							Consume ();
+							tokens.Add (new TArDec (line));
+						}
+
+						// Subtraction
+						else {
+							tokens.Add (new TArSub (line));
+						}
+
 						LogToken ();
 						break;
+					
+					// Multiplication
 					case '*':
 						Consume ();
-						tokens.Add (new TArMul (line));
+
+						// Multiplication w/ assignment
+						if (PeekChar () == '=') {
+							Consume ();
+							tokens.Add (new TAsMul (line));
+						}
+
+						// Multiplication
+						else {
+							tokens.Add (new TArMul (line));
+						}
+
 						LogToken ();
 						break;
+					
+					// Division
 					case '/':
 						Consume ();
-						tokens.Add (new TArDiv (line));
+
+						// Division w/ assignment
+						if (PeekChar () == '=') {
+							Consume ();
+							tokens.Add (new TAsDiv (line));
+						}
+
+						// Division
+						else {
+							tokens.Add (new TArDiv (line));
+						}
+
 						LogToken ();
 						break;
+					
+					// Bitwise or
 					case '|':
 						Consume ();
-						tokens.Add (new TBitOr (line));
+
+						// Logical or
+						if (PeekChar () == '|') {
+							Consume ();
+							tokens.Add (new TLogOr (line));
+						}
+
+						// Bitwise or w/ assignment
+						else if (PeekChar () == '=') {
+							Consume ();
+							tokens.Add (new TAsOr (line));
+						}
+
+						// Bitwise or
+						else {
+							tokens.Add (new TBitOr (line));
+						}
+
 						LogToken ();
 						break;
+					
+					// Bitwise and
 					case '&':
 						Consume ();
-						tokens.Add (new TBitAnd (line));
+
+						// Logical and
+						if (PeekChar () == '&') {
+							Consume ();
+							tokens.Add (new TLogAnd (line));
+						}
+
+						// Bitwise and w/ assignment
+						else if (PeekChar () == '=') {
+							Consume ();
+							tokens.Add (new TAsAnd (line));
+						}
+
+						// Bitwise and
+						else {
+							tokens.Add (new TBitAnd (line));
+						}
+
 						LogToken ();
 						break;
+					
+					// Lower than
 					case '<':
 						Consume ();
-						tokens.Add (new TBitShL (line));
+
+						// Bitwise shift left
+						if (PeekChar () == '<') {
+							Consume ();
+
+							// Bitwise shift left w/ assignment
+							if (PeekChar () == '=') {
+								Consume ();
+								tokens.Add (new TAsShL (line));
+							}
+
+							// Bitwise shift left
+							else {
+								tokens.Add (new TBitShL (line));
+							}
+						}
+
+						// Lower than or equal to
+						else if (PeekChar () == '=') {
+							Consume ();
+							tokens.Add (new TLogLtE (line));
+						}
+
+						// Lower than
+						else {
+							tokens.Add (new TLogLt (line));
+						}
+
 						LogToken ();
 						break;
+					
+					// Greater then
 					case '>':
 						Consume ();
-						tokens.Add (new TBitShR (line));
+
+						// Bitwise shift right
+						if (PeekChar () == '>') {
+							Consume ();
+
+							// Bitwise shift right w/ assignment
+							if (PeekChar () == '=') {
+								Consume ();
+								tokens.Add (new TAsShR (line));
+							}
+
+							// Bitwise shift right
+							else {
+								tokens.Add (new TBitShR (line));
+							}
+						}
+
+						// Greater then or equal to
+						else if (PeekChar () == '=') {
+							Consume ();
+							tokens.Add (new TLogGtE (line));
+						}
+
+						// Greater then
+						else {
+							tokens.Add (new TLogGt (line));
+						}
+
 						LogToken ();
 						break;
+					
+					// Bitwise not
+					case '~':
+						Consume ();
+
+						// Bitwise not w/ assignment
+						if (PeekChar () == '=') {
+							Consume ();
+							tokens.Add (new TAsNot (line));
+						}
+
+						// Bitwise not
+						else {
+							tokens.Add (new TBitNot (line));
+						}
+
+						LogToken ();
+						break;
+					
+					// Bitwise xor
+					case '^':
+						Consume ();
+
+						// Bitwise xor w/ assignment
+						if (PeekChar () == '=') {
+							Consume ();
+							tokens.Add (new TAsXor (line));
+						}
+
+						// Bitwise xor
+						else {
+							tokens.Add (new TBitXor (line));
+						}
+
+						LogToken ();
+						break;
+					
+					// Logical not
+					case '!':
+						Consume ();
+
+						// Not equal
+						if (PeekChar () == '=') {
+							Consume ();
+
+							// Not strict equal
+							if (PeekChar () == '=') {
+								Consume ();
+								tokens.Add (new TLogNSeq (line));
+							}
+
+							// Not equal
+							else {
+								tokens.Add (new TLogNeq (line));
+							}
+						}
+
+						// Logical not
+						else {
+							tokens.Add (new TLogNot (line));
+						}
+
+						LogToken ();
+						break;
+					
+					// Default
 					default:
 						log.Error.Write ("[Lexer] Unexpected character '{0}' at line {1}:{2}. Compilation failed.\n", PeekChar (), line, lpos);
 						terminate ("The lexical analysis failed because it hit an unimplemented character.");
