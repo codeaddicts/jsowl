@@ -10,10 +10,13 @@ namespace libjsowl
 		private int line = 0;
 
 		private CompilerOptions options;
+		private bool define_main = false;
 
 		public CodeGen (CompilerOptions options)
 		{
 			this.options = options;
+			if ((options & CompilerOptions.DefineMain) == CompilerOptions.DefineMain)
+				this.define_main = true;
 		}
 
 		public string Feed (List<Token> tokens) {
@@ -289,7 +292,7 @@ namespace libjsowl
 		public void Workify () {
 			string tmp = output;
 			output = string.Empty;
-			output = string.Format ("document.addEventListener(\"DOMContentLoaded\", function(event) {{{0}main ();}});", tmp); 
+			output = string.Format ("document.addEventListener(\"DOMContentLoaded\", function(_event_) {{{0}{1}}});", tmp, define_main ? "main ();" : ""); 
 			//output = string.Format ("(function () {{{0}main ();}}) ();", tmp);
 		}
 	}

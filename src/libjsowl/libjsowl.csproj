@@ -70,6 +70,13 @@
     <Compile Include="Syntax\Brackets\TCBrR.cs" />
     <Compile Include="Syntax\Brackets\TParL.cs" />
     <Compile Include="Syntax\Brackets\TParR.cs" />
+    <Compile Include="Syntax\Arithmetics\Logical\TLogAnd.cs" />
+    <Compile Include="Syntax\Arithmetics\Logical\TLogOr.cs" />
+    <Compile Include="Syntax\Arithmetics\Logical\TLogGt.cs" />
+    <Compile Include="Syntax\Arithmetics\Logical\TLogGtE.cs" />
+    <Compile Include="Syntax\Arithmetics\Logical\TLogLt.cs" />
+    <Compile Include="Syntax\Arithmetics\Logical\TLogLtE.cs" />
+    <Compile Include="Syntax\Arithmetics\Logical\TLogEq.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

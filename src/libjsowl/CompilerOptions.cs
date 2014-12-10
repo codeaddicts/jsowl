@@ -47,7 +47,13 @@ namespace libjsowl
 		/// <summary>
 		/// Sets all verbose flags at once.
 		/// </summary>
-		Verbose_All = 0x04 | 0x08 | 0x16 | 0x32
+		Verbose_All = 0x04 | 0x08 | 0x16 | 0x32,
+
+		/// <summary>
+		/// Tells the compiler to run the main-method
+		/// at the start of the script
+		/// </summary>
+		DefineMain = 0x64
 	}
 }
 

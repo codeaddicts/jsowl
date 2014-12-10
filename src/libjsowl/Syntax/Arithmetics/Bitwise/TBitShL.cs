@@ -10,7 +10,7 @@ namespace libjsowl
 
 		public override string ToString ()
 		{
-			return string.Format ("<");
+			return string.Format ("<<");
 		}
 	}
 }
