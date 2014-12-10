@@ -1,0 +1,5 @@
+def hello {
+	alert ("Hello from jsowl!");
+}
+
+hello ();
