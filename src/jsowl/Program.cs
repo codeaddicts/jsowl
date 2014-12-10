@@ -10,7 +10,6 @@ namespace jsowl
 		{
 			string input = "";
 			string output = "";
-			bool define_main = false;
 
 			CompilerOptions options = new CompilerOptions ();
 
@@ -71,7 +70,8 @@ namespace jsowl
 						options |= CompilerOptions.PreserveNewlines;
 					break;
 				case "--main":
-					define_main = true;
+					if ((options & CompilerOptions.DefineMain) != CompilerOptions.DefineMain)
+						options |= CompilerOptions.DefineMain;
 					break;
 				}
 			}
