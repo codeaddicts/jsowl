@@ -136,7 +136,7 @@ namespace libjsowl
 				} else if (PeekChar () == '\"' || PeekChar () == '\'') {
 					tokens.Add (ScanString ());
 					LogToken ();
-				} else if (char.IsLetter (PeekChar ())) {
+				} else if (char.IsLetter (PeekChar ()) || PeekChar () == '$' || PeekChar () == '_') {
 					tokens.Add (ScanIdentifier ());
 					LogToken ();
 				} else if (PeekChar () == '/' && PeekChar (2) == '/') {
@@ -159,6 +159,12 @@ namespace libjsowl
 					case ',':
 						Consume ();
 						tokens.Add (new TComma (line));
+						break;
+					
+					// Colon operator
+					case ':':
+						Consume ();
+						tokens.Add (new TColon (line));
 						break;
 					
 					// End of instruction

@@ -1,0 +1,6 @@
+let json = {
+	"employees": [
+		{ "firstName": "Sample", "lastName": "Sample" },
+		{ "firstName": "sample2", "lastName": "Sample2" }
+	]
+};
