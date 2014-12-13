@@ -95,6 +95,8 @@
     <Compile Include="Syntax\Operators\Assignments\TAsNot.cs" />
     <Compile Include="Syntax\Operators\Assignments\TAsXor.cs" />
     <Compile Include="Syntax\Operators\Logical\TLogNot.cs" />
+    <Compile Include="Preprocessor.cs" />
+    <Compile Include="ICompilerBlock.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -28,26 +28,28 @@ namespace jsowl
 					}
 					break;
 				case "-v":
-				case "-vcompiler":
+				case "-vc":
 					if ((options & CompilerOptions.Verbose_Compiler) != CompilerOptions.Verbose_Compiler)
 						options |= CompilerOptions.Verbose_Compiler;
 					break;
 				case "-vlex":
-				case "-vlexer":
+				case "-vl":
 					if ((options & CompilerOptions.Verbose_Lexer) != CompilerOptions.Verbose_Lexer)
 						options |= CompilerOptions.Verbose_Lexer;
 					break;
 				case "-vgen":
-				case "-vcodegen":
+				case "-vcg":
+				case "-vg":
 					if ((options & CompilerOptions.Verbose_CodeGen) != CompilerOptions.Verbose_CodeGen)
 						options |= CompilerOptions.Verbose_CodeGen;
 					break;
-				case "-vbeautifier":
+				case "-vb":
 					if ((options & CompilerOptions.Verbose_Beautifier) != CompilerOptions.Verbose_Beautifier)
 						options |= CompilerOptions.Verbose_Beautifier;
 					break;
+				case "-va":
 				case "-vall":
-					// Unset all previous set verbose flags
+					// Unset all previously set verbose flags
 					if ((options & CompilerOptions.Verbose_Compiler) == CompilerOptions.Verbose_Compiler)
 						options &= ~CompilerOptions.Verbose_Compiler;
 					if ((options & CompilerOptions.Verbose_Lexer) == CompilerOptions.Verbose_Lexer)
@@ -72,6 +74,14 @@ namespace jsowl
 				case "--main":
 					if ((options & CompilerOptions.DefineMain) != CompilerOptions.DefineMain)
 						options |= CompilerOptions.DefineMain;
+					break;
+				case "--cgi":
+					// Unset all previously set cgi-related flags
+					if ((options & CompilerOptions.OutputToStdout) == CompilerOptions.OutputToStdout)
+						options &= ~CompilerOptions.OutputToStdout;
+
+					// Set all cgi-related flags at once
+					options |= CompilerOptions.OptimizeCGI;
 					break;
 				}
 			}
