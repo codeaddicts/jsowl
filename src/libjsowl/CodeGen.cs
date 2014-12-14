@@ -4,19 +4,24 @@ using System.Collections.Generic;
 
 namespace libjsowl
 {
-	public class CodeGen
+	public class CodeGen : ICompilerBlock
 	{
+		// Private fields
 		private string output = string.Empty;
 		private int line = 0;
 
-		private CompilerOptions options;
-		private bool define_main = false;
+		// Private properties
+		private bool define_main { get { return this.options.HasFlag (CompilerOptions.DefineMain); } }
+
+		#region ICompilerBlock implementation
+
+		public CompilerOptions options { get; set; }
+
+		#endregion
 
 		public CodeGen (CompilerOptions options)
 		{
 			this.options = options;
-			if ((options & CompilerOptions.DefineMain) == CompilerOptions.DefineMain)
-				this.define_main = true;
 		}
 
 		public string Feed (List<Token> tokens) {

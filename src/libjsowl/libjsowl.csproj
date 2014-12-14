@@ -46,7 +46,6 @@
     <Compile Include="Syntax\TNumber.cs" />
     <Compile Include="Compiler.cs" />
     <Compile Include="CompilerOptions.cs" />
-    <Compile Include="ITerminatable.cs" />
     <Compile Include="TerminationCallback.cs" />
     <Compile Include="Syntax\Brackets\TBrL.cs" />
     <Compile Include="Syntax\Brackets\TBrR.cs" />
@@ -96,7 +95,8 @@
     <Compile Include="Syntax\Operators\Assignments\TAsXor.cs" />
     <Compile Include="Syntax\Operators\Logical\TLogNot.cs" />
     <Compile Include="Preprocessor.cs" />
-    <Compile Include="ICompilerBlock.cs" />
+    <Compile Include="Interfaces\ICompilerBlock.cs" />
+    <Compile Include="Interfaces\ITerminatable.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -108,5 +108,6 @@
     <Folder Include="Syntax\Operators\Bitwise\" />
     <Folder Include="Syntax\Operators\Logical\" />
     <Folder Include="Syntax\Operators\Assignments\" />
+    <Folder Include="Interfaces\" />
   </ItemGroup>
 </Project>

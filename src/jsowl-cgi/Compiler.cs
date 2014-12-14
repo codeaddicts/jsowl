@@ -5,14 +5,19 @@ namespace jsowlcgi
 {
 	public class Compiler
 	{
+		Preprocessor preprocessor;
 		Lexer lex;
 		CodeGen gen;
 		Beautifier sexify;
 
 		public Compiler () {
-			lex = new Lexer ((reason) => { Console.WriteLine ("// ERROR."); });
-			gen = new CodeGen (CompilerOptions.None);
-			sexify = new Beautifier ();
+			CompilerOptions options = CompilerOptions.OptimizeCGI;
+
+			// Compiler blocks
+			this.preprocessor = new Preprocessor (options);
+			this.lex = new Lexer (options, (reason) => { Console.WriteLine ("// Lexer failed to tokenize the input string."); });
+			this.gen = new CodeGen (options);
+			this.sexify = new Beautifier (options);
 		}
 
 		public string Run (string content) {

@@ -16,6 +16,7 @@ namespace libjsowl
 		#endregion
 
 		// Private fields
+		private Preprocessor preprocessor;
 		private Lexer lexer;
 		private CodeGen generator;
 		private Beautifier sexifier;
@@ -38,12 +39,12 @@ namespace libjsowl
 			this.abort = false;
 			this.finished = false;
 			this.options = options;
-			this.lexer = new Lexer (HandleTermination);
-			this.generator = new CodeGen (options);
-			this.sexifier = new Beautifier ();
 
-			if ((options & CompilerOptions.Verbose_Lexer) == CompilerOptions.Verbose_Lexer)
-				this.lexer.verbose = true;
+			// Compiler blocks
+			this.preprocessor = new Preprocessor (this.options);
+			this.lexer = new Lexer (this.options, HandleTermination);
+			this.generator = new CodeGen (this.options);
+			this.sexifier = new Beautifier (this.options);
 
 			LogOptions ();
 		}
@@ -63,11 +64,11 @@ namespace libjsowl
 		/// <param name="input">Input file path.</param>
 		/// <param name="output">Output file path.</param>
 		public void Start (string input_file, string output_file) {
-			compilerThread = new Thread (call => Compile (input_file, output_file));
-			mainThread = new Thread (MainThread);
-			mainThread.Start ();
-			compilerThread.Start ();
-			mainThread.Join ();
+			this.compilerThread = new Thread (call => Compile (input_file, output_file));
+			this.mainThread = new Thread (MainThread);
+			this.mainThread.Start ();
+			this.compilerThread.Start ();
+			this.mainThread.Join ();
 		}
 
 		[SecurityPermissionAttribute(SecurityAction.Demand, ControlThread = true)]
@@ -86,7 +87,7 @@ namespace libjsowl
 		/// <param name="input">Path to the source file. Both relative and absolute paths will be fine.</param>
 		/// <param name="output">Path to the output file. Both relative and absolute paths will be fine.</param> 
 		private void Compile (string input_file, string output_file) {
-			long tlex = 0L, tgen = 0L, tsexify = 0L, ttotal = 0L;
+			long tpre = 0L, tlex = 0L, tgen = 0L, tsexify = 0L, ttotal = 0L;
 
 			// Create a stopwatch to measure the time the
 			// compiler takes to do specific operations.
@@ -96,9 +97,11 @@ namespace libjsowl
 			// if the CompilerOptions.ReadFromStdin is set.
 			if (options.HasFlag (CompilerOptions.ReadFromStdin)) {
 				StringBuilder sb = new StringBuilder ();
+
 				while (Console.KeyAvailable) {
 					sb.Append (Console.ReadKey ().KeyChar);
 				}
+
 				this.source += sb.ToString ();
 			}
 
@@ -112,10 +115,18 @@ namespace libjsowl
 				}
 			}
 
+			// Preprocessing the source
+			Log ("Starting preprocessor.");
+			watch.Start ();
+			this.source = this.preprocessor.Feed (this.source);
+			watch.Stop ();
+			tpre = watch.ElapsedMilliseconds;
+			LogTime ("Preprocessing took {0}ms.", tpre);
+
 			// Lexical analysis
 			Log ("Starting lexical analysis.");
-			watch.Start ();
-			lexer.FeedSource (this.source);
+			watch.Restart ();
+			this.lexer.FeedSource (this.source);
 			watch.Stop ();
 			tlex = watch.ElapsedMilliseconds;
 			LogTime ("Lexical analysis took {0}ms.", tlex);
@@ -123,7 +134,7 @@ namespace libjsowl
 			// Code generation
 			Log ("Starting code generation.");
 			watch.Restart ();
-			value = generator.Feed (lexer.tokens);
+			this.value = this.generator.Feed (this.lexer.tokens);
 			watch.Stop ();
 			tgen = watch.ElapsedMilliseconds;
 			LogTime ("Code generation took {0}ms.", tgen);
@@ -131,28 +142,28 @@ namespace libjsowl
 			// Beautification
 			Log ("Starting beautification.");
 			watch.Restart ();
-			value = sexifier.Feed (value);
+			this.value = this.sexifier.Feed (this.value);
 			watch.Stop ();
 			tsexify = watch.ElapsedMilliseconds;
 			LogTime ("Beautification took {0}ms.", tsexify);
 
 			// Report the total time
-			ttotal = tlex + tgen + tsexify;
+			ttotal = tpre + tlex + tgen + tsexify;
 			LogTime ("Compilation took {0}ms in total.", ttotal);
 
 			// We need to check for a possible pending termination here,
 			// because we would probably create a huge mess in the output file otherwise.
-			if (abort)
+			if (this.abort)
 				return;
 
 			// Write the generated code to the standard out stream
 			// if the CompilerOptions.OutputToStdout flag is set.
-			if (options.HasFlag (CompilerOptions.OutputToStdout)) {
+			if (this.options.HasFlag (CompilerOptions.OutputToStdout)) {
 				// Set the Content-Type if the CompilerOptions.CGI-Flag is set
-				if (options.HasFlag (CompilerOptions.CGI)) {
+				if (this.options.HasFlag (CompilerOptions.CGI)) {
 					Console.Write ("Content-Type: text/javascript\n\n");
 				}
-				Console.Write (value);
+				Console.Write (this.value);
 			}
 
 			// Write the generated code to file if the
@@ -164,7 +175,7 @@ namespace libjsowl
 			}
 
 			// Set the finished variable to true
-			finished = true;
+			this.finished = true;
 		}
 
 		/// <summary>

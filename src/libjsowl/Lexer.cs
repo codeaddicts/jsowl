@@ -11,16 +11,24 @@ namespace libjsowl
 	/// <summary>
 	/// The jsowl tokenizer
 	/// </summary>
-	public class Lexer : ITerminatable
+	public class Lexer : ICompilerBlock, ITerminatable
 	{
+		// Private fields
 		private int pos;
 		private int line;
 		private int lpos;
 		private string src;
 		private bool eolnix;
 
+		// Public properties
 		public List<Token> tokens { get; private set; }
-		public bool verbose { get; set; }
+		public bool verbose { get { return this.options.HasFlag (CompilerOptions.Verbose_Lexer); } }
+
+		#region ICompilerBlock implementation
+
+		public CompilerOptions options { get; set; }
+
+		#endregion
 
 		#region ITerminatable implementation
 
@@ -31,15 +39,16 @@ namespace libjsowl
 		/// <summary>
 		/// Initializes a new instance of the <see cref="libjsowl.Lexer"/> class.
 		/// </summary>
-		public Lexer (TerminationCallback terminator)
+		public Lexer (CompilerOptions options, TerminationCallback terminator)
 		{
-			pos = -1;
-			line = 1;
-			lpos = 0;
-			src = string.Empty;
-			eolnix = false;
-			tokens = new List<Token> ();
-			terminate = terminator;
+			this.pos = -1;
+			this.line = 1;
+			this.lpos = 0;
+			this.src = string.Empty;
+			this.eolnix = false;
+			this.tokens = new List<Token> ();
+			this.terminate = terminator;
+			this.options = options;
 		}
 
 		/// <summary>
