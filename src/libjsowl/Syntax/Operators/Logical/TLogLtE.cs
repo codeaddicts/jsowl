@@ -4,7 +4,7 @@ namespace libjsowl
 {
 	public class TLogLtE : Token
 	{
-		public TLogLtE (int line) : base (line)
+		public TLogLtE (int line) : base (line, "Logical lower than equals")
 		{
 		}
 

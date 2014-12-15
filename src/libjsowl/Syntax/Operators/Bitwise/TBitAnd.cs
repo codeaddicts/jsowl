@@ -4,7 +4,7 @@ namespace libjsowl
 {
 	public class TBitAnd : Token
 	{
-		public TBitAnd (int line) : base (line, "Bitwise and")
+		public TBitAnd (int line) : base (line, "Bitwise AND")
 		{
 		}
 

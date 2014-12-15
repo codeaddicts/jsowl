@@ -4,7 +4,7 @@ namespace libjsowl
 {
 	public class TBitXor : Token
 	{
-		public TBitXor (int line) : base (line, "Bitwise xor")
+		public TBitXor (int line) : base (line, "Bitwise XOR")
 		{
 		}
 

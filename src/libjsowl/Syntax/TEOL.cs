@@ -4,7 +4,7 @@ namespace libjsowl
 {
 	public class TEOL : Token
 	{
-		public TEOL (int line) : base (line, "End Of Line")
+		public TEOL (int line) : base (line, "End of Line")
 		{
 		}
 

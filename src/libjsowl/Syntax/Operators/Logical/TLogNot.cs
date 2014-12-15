@@ -4,7 +4,7 @@ namespace libjsowl
 {
 	public class TLogNot : Token
 	{
-		public TLogNot (int line) : base (line)
+		public TLogNot (int line) : base (line, "Logical NOT")
 		{
 		}
 

@@ -17,7 +17,6 @@
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release/AnyCPU|AnyCPU' ">
@@ -26,7 +25,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug/x64|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -48,7 +46,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Lexer.cs" />
     <Compile Include="Syntax\Token.cs" />
     <Compile Include="Syntax\TIdent.cs" />
     <Compile Include="Syntax\TString.cs" />
@@ -69,10 +66,6 @@
     <Compile Include="Syntax\Brackets\TParR.cs" />
     <Compile Include="Syntax\Comments\TComment.cs" />
     <Compile Include="Syntax\Comments\TMultilineComment.cs" />
-    <Compile Include="Syntax\Operators\TArDiv.cs" />
-    <Compile Include="Syntax\Operators\TArSub.cs" />
-    <Compile Include="Syntax\Operators\TArMul.cs" />
-    <Compile Include="Syntax\Operators\TArAdd.cs" />
     <Compile Include="Syntax\Operators\Bitwise\TBitAnd.cs" />
     <Compile Include="Syntax\Operators\Bitwise\TBitOr.cs" />
     <Compile Include="Syntax\Operators\Bitwise\TBitShL.cs" />
@@ -84,29 +77,14 @@
     <Compile Include="Syntax\Operators\Logical\TLogLt.cs" />
     <Compile Include="Syntax\Operators\Logical\TLogLtE.cs" />
     <Compile Include="Syntax\Operators\Logical\TLogEq.cs" />
-    <Compile Include="Syntax\Operators\TArMod.cs" />
-    <Compile Include="Syntax\Operators\TArInc.cs" />
-    <Compile Include="Syntax\Operators\TArDec.cs" />
-    <Compile Include="Syntax\Operators\Assignments\TAssign.cs" />
-    <Compile Include="Syntax\Operators\Assignments\TAsAdd.cs" />
-    <Compile Include="Syntax\Operators\Assignments\TAsSub.cs" />
-    <Compile Include="Syntax\Operators\Assignments\TAsMul.cs" />
-    <Compile Include="Syntax\Operators\Assignments\TAsDiv.cs" />
-    <Compile Include="Syntax\Operators\Assignments\TAsMod.cs" />
     <Compile Include="Syntax\Operators\Bitwise\TBitXor.cs" />
     <Compile Include="Syntax\Operators\Bitwise\TBitNot.cs" />
     <Compile Include="Syntax\Operators\Logical\TLogNeq.cs" />
     <Compile Include="Syntax\Operators\Logical\TLogNSeq.cs" />
     <Compile Include="Syntax\Operators\Logical\TLogSeq.cs" />
-    <Compile Include="Syntax\Operators\Assignments\TAsShL.cs" />
-    <Compile Include="Syntax\Operators\Assignments\TAsShR.cs" />
     <Compile Include="Syntax\Operators\TComma.cs" />
     <Compile Include="Syntax\Operators\TDot.cs" />
     <Compile Include="Syntax\Operators\TColon.cs" />
-    <Compile Include="Syntax\Operators\Assignments\TAsAnd.cs" />
-    <Compile Include="Syntax\Operators\Assignments\TAsOr.cs" />
-    <Compile Include="Syntax\Operators\Assignments\TAsNot.cs" />
-    <Compile Include="Syntax\Operators\Assignments\TAsXor.cs" />
     <Compile Include="Syntax\Operators\Logical\TLogNot.cs" />
     <Compile Include="Preprocessor.cs" />
     <Compile Include="Interfaces\ITerminatable.cs" />
@@ -115,6 +93,28 @@
     <Compile Include="Delegates\TerminationCallback.cs" />
     <Compile Include="Interfaces\ILoggable.cs" />
     <Compile Include="LogExtensions.cs" />
+    <Compile Include="Interfaces\IScanner.cs" />
+    <Compile Include="Lexer.cs" />
+    <Compile Include="Syntax\Operators\Assignments\TAssign.cs" />
+    <Compile Include="Syntax\Operators\Assignments\TAsAdd.cs" />
+    <Compile Include="Syntax\Operators\Assignments\TAsSub.cs" />
+    <Compile Include="Syntax\Operators\Assignments\TAsMul.cs" />
+    <Compile Include="Syntax\Operators\Assignments\TAsDiv.cs" />
+    <Compile Include="Syntax\Operators\Assignments\TAsMod.cs" />
+    <Compile Include="Syntax\Operators\Assignments\TAsShL.cs" />
+    <Compile Include="Syntax\Operators\Assignments\TAsShR.cs" />
+    <Compile Include="Syntax\Operators\Assignments\TAsAnd.cs" />
+    <Compile Include="Syntax\Operators\Assignments\TAsOr.cs" />
+    <Compile Include="Syntax\Operators\Assignments\TAsNot.cs" />
+    <Compile Include="Syntax\Operators\Assignments\TAsXor.cs" />
+    <Compile Include="Syntax\Operators\Arithmetics\TArAdd.cs" />
+    <Compile Include="Syntax\Operators\Arithmetics\TArDec.cs" />
+    <Compile Include="Syntax\Operators\Arithmetics\TArDiv.cs" />
+    <Compile Include="Syntax\Operators\Arithmetics\TArInc.cs" />
+    <Compile Include="Syntax\Operators\Arithmetics\TArMod.cs" />
+    <Compile Include="Syntax\Operators\Arithmetics\TArMul.cs" />
+    <Compile Include="Syntax\Operators\Arithmetics\TArSub.cs" />
+    <Compile Include="Syntax\Operators\Logical\TLogTernary.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -125,8 +125,9 @@
     <Folder Include="Syntax\Operators\" />
     <Folder Include="Syntax\Operators\Bitwise\" />
     <Folder Include="Syntax\Operators\Logical\" />
-    <Folder Include="Syntax\Operators\Assignments\" />
     <Folder Include="Interfaces\" />
     <Folder Include="Delegates\" />
+    <Folder Include="Syntax\Operators\Assignments\" />
+    <Folder Include="Syntax\Operators\Arithmetics\" />
   </ItemGroup>
 </Project>

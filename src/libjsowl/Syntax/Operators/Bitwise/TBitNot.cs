@@ -4,7 +4,7 @@ namespace libjsowl
 {
 	public class TBitNot : Token
 	{
-		public TBitNot (int line) : base (line, "Bitwise not")
+		public TBitNot (int line) : base (line, "Bitwise NOT")
 		{
 		}
 

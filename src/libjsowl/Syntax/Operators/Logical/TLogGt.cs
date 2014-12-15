@@ -4,7 +4,7 @@ namespace libjsowl
 {
 	public class TLogGt : Token
 	{
-		public TLogGt (int line) : base (line)
+		public TLogGt (int line) : base (line, "Logical greater than")
 		{
 		}
 

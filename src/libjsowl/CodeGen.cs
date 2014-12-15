@@ -233,7 +233,8 @@ namespace libjsowl
 					tokens [i] is TLogEq ||
 					tokens [i] is TLogNeq ||
 					tokens [i] is TLogSeq ||
-					tokens [i] is TLogNSeq
+					tokens [i] is TLogNSeq ||
+					tokens [i] is TLogTernary
 				) {
 					output += string.Format (" {0} ", tokens [i].ToString ());
 				}

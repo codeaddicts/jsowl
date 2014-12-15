@@ -448,6 +448,13 @@ namespace libjsowl
 
 						LogToken ();
 						break;
+
+					// Ternary operator
+					case '?':
+						Consume ();
+						tokens.Add (new TLogTernary (line));
+						LogToken ();
+						break;
 					
 					// Default
 					default:

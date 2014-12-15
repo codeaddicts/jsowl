@@ -4,7 +4,7 @@ namespace libjsowl
 {
 	public class TLogNeq : Token
 	{
-		public TLogNeq (int line) : base (line)
+		public TLogNeq (int line) : base (line, "Logical not equals")
 		{
 		}
 
