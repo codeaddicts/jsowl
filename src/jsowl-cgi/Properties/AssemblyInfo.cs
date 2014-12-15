@@ -5,11 +5,11 @@ using System.Runtime.CompilerServices;
 // Change them to the values specific to your project.
 
 [assembly: AssemblyTitle ("jsowl-cgi")]
-[assembly: AssemblyDescription ("")]
+[assembly: AssemblyDescription ("jsowl cgi application")]
 [assembly: AssemblyConfiguration ("")]
-[assembly: AssemblyCompany ("")]
-[assembly: AssemblyProduct ("")]
-[assembly: AssemblyCopyright ("SplittyDev")]
+[assembly: AssemblyCompany ("CodeAddicts")]
+[assembly: AssemblyProduct ("jsowl-cgi")]
+[assembly: AssemblyCopyright ("CodeAddicts")]
 [assembly: AssemblyTrademark ("")]
 [assembly: AssemblyCulture ("")]
 

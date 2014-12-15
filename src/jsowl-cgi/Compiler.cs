@@ -5,6 +5,7 @@ namespace jsowlcgi
 {
 	public class Compiler
 	{
+		Log logger;
 		Preprocessor preprocessor;
 		Lexer lex;
 		CodeGen gen;
@@ -14,8 +15,9 @@ namespace jsowlcgi
 			CompilerOptions options = CompilerOptions.OptimizeCGI;
 
 			// Compiler blocks
+			this.logger = new Log (options);
 			this.preprocessor = new Preprocessor (options);
-			this.lex = new Lexer (options, (reason) => { Console.WriteLine ("// Lexer failed to tokenize the input string."); });
+			this.lex = new Lexer (options, logger, (reason) => { Console.WriteLine ("// Lexer failed to tokenize the input string."); });
 			this.gen = new CodeGen (options);
 			this.sexify = new Beautifier (options);
 		}

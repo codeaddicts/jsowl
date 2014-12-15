@@ -3,7 +3,7 @@ using System.Text;
 
 namespace libjsowl
 {
-	public class Beautifier : ICompilerBlock
+	public class Beautifier : ICompilerComponent
 	{
 		#region ICompilerBlock implementation
 

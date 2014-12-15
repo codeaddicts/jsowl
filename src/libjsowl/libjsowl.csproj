@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug/AnyCPU</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{70F6F984-CDE0-494B-B8AA-158D586CFE0F}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -9,7 +9,7 @@
     <AssemblyName>libjsowl</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug/AnyCPU|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -17,15 +17,30 @@
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>full</DebugType>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release/AnyCPU|AnyCPU' ">
     <Optimize>true</Optimize>
     <OutputPath>..\bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug/x64|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\x64</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release/x64|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\x64</OutputPath>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -46,7 +61,6 @@
     <Compile Include="Syntax\TNumber.cs" />
     <Compile Include="Compiler.cs" />
     <Compile Include="CompilerOptions.cs" />
-    <Compile Include="TerminationCallback.cs" />
     <Compile Include="Syntax\Brackets\TBrL.cs" />
     <Compile Include="Syntax\Brackets\TBrR.cs" />
     <Compile Include="Syntax\Brackets\TCBrL.cs" />
@@ -95,8 +109,12 @@
     <Compile Include="Syntax\Operators\Assignments\TAsXor.cs" />
     <Compile Include="Syntax\Operators\Logical\TLogNot.cs" />
     <Compile Include="Preprocessor.cs" />
-    <Compile Include="Interfaces\ICompilerBlock.cs" />
     <Compile Include="Interfaces\ITerminatable.cs" />
+    <Compile Include="Log.cs" />
+    <Compile Include="Interfaces\ICompilerComponent.cs" />
+    <Compile Include="Delegates\TerminationCallback.cs" />
+    <Compile Include="Interfaces\ILoggable.cs" />
+    <Compile Include="LogExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -109,5 +127,6 @@
     <Folder Include="Syntax\Operators\Logical\" />
     <Folder Include="Syntax\Operators\Assignments\" />
     <Folder Include="Interfaces\" />
+    <Folder Include="Delegates\" />
   </ItemGroup>
 </Project>

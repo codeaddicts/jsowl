@@ -2,7 +2,7 @@
 
 namespace libjsowl
 {
-	public interface ICompilerBlock
+	public interface ICompilerComponent
 	{
 		CompilerOptions options { get; set; }
 	}

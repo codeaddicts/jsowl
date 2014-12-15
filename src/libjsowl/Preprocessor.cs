@@ -6,7 +6,7 @@ using log = System.Console;
 
 namespace libjsowl
 {
-	public class Preprocessor : ICompilerBlock
+	public class Preprocessor : ICompilerComponent
 	{
 		#region ICompilerBlock implementation
 
@@ -25,15 +25,16 @@ namespace libjsowl
 		/// <param name="src">Source.</param>
 		public string Feed (string src) {
 			StringBuilder sb = new StringBuilder ();
+			var source = src;
 
 			// Normalize line endings
-			src = Normalize (src);
+			source = Normalize (src);
 
 			// Strip the shebang
-			src = StripShebang (src);
+			source = StripShebang (src);
 
 			// Split the string into lines
-			string[] lines = src.Split (new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+			string[] lines = source.Split (new char[] { '\n' }, StringSplitOptions.None);
 
 			// Iterate through every single line
 			for (int i = 0; i < lines.Length; i++) {
@@ -57,7 +58,7 @@ namespace libjsowl
 						if (File.Exists (directive [1])) {
 							using (FileStream FILE = new FileStream (directive [1], FileMode.Open)) {
 								using (StreamReader reader = new StreamReader (FILE)) {
-									sb.AppendLine (reader.ReadToEnd ());
+									sb.AppendFormat ("{0}\n", reader.ReadToEnd ());
 								}
 							}
 						} else {
@@ -74,7 +75,7 @@ namespace libjsowl
 
 					}
 				} else {
-					sb.AppendLine (lines [i]);
+					sb.AppendFormat ("{0}\n", lines [i]);
 				}
 			}
 
@@ -102,7 +103,7 @@ namespace libjsowl
 				i++;
 			}
 			for (; i < parts.Length; i++) {
-				sb.Append (parts [i]);
+				sb.AppendFormat ("{0}\n", parts [i]);
 			}
 			return sb.ToString ();
 		}

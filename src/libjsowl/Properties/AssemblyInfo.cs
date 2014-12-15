@@ -5,11 +5,11 @@ using System.Runtime.CompilerServices;
 // Change them to the values specific to your project.
 
 [assembly: AssemblyTitle ("libjsowl")]
-[assembly: AssemblyDescription ("")]
+[assembly: AssemblyDescription ("jsowl library")]
 [assembly: AssemblyConfiguration ("")]
-[assembly: AssemblyCompany ("")]
-[assembly: AssemblyProduct ("")]
-[assembly: AssemblyCopyright ("SplittyDev")]
+[assembly: AssemblyCompany ("CodeAddicts")]
+[assembly: AssemblyProduct ("libjsowl")]
+[assembly: AssemblyCopyright ("CodeAddicts")]
 [assembly: AssemblyTrademark ("")]
 [assembly: AssemblyCulture ("")]
 

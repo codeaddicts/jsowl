@@ -4,29 +4,33 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Text;
-using log = System.Console;
 
 namespace libjsowl
 {
 	/// <summary>
 	/// The jsowl tokenizer
 	/// </summary>
-	public class Lexer : ICompilerBlock, ITerminatable
+	public class Lexer : ICompilerComponent, ILoggable, ITerminatable
 	{
 		// Private fields
 		private int pos;
 		private int line;
 		private int lpos;
 		private string src;
-		private bool eolnix;
 
 		// Public properties
 		public List<Token> tokens { get; private set; }
-		public bool verbose { get { return this.options.HasFlag (CompilerOptions.Verbose_Lexer); } }
 
 		#region ICompilerBlock implementation
 
 		public CompilerOptions options { get; set; }
+
+		#endregion
+
+		#region ILoggable implementation
+
+		public Log Logger { get; set; }
+		public bool Verbose { get { return this.options.HasFlag (CompilerOptions.Verbose_Lexer); } }
 
 		#endregion
 
@@ -39,16 +43,16 @@ namespace libjsowl
 		/// <summary>
 		/// Initializes a new instance of the <see cref="libjsowl.Lexer"/> class.
 		/// </summary>
-		public Lexer (CompilerOptions options, TerminationCallback terminator)
+		public Lexer (CompilerOptions options, Log logger, TerminationCallback terminator)
 		{
 			this.pos = -1;
 			this.line = 1;
 			this.lpos = 0;
 			this.src = string.Empty;
-			this.eolnix = false;
 			this.tokens = new List<Token> ();
-			this.terminate = terminator;
 			this.options = options;
+			this.Logger = logger;
+			this.terminate = terminator;
 		}
 
 		/// <summary>
@@ -66,22 +70,6 @@ namespace libjsowl
 		/// <param name="path">Path.</param>
 		[Obsolete ("Feeding a file to the lexer is not longer supported.", true)]
 		public void FeedFile (string path) {
-			var source = "";
-			using (FileStream FILE = new FileStream (path, FileMode.Open)) {
-				using (StreamReader reader = new StreamReader (FILE)) {
-					source = reader.ReadToEnd ();
-				}
-			}
-			FeedSource (source);
-		}
-
-		/// <summary>
-		/// Normalizes the line endings of the source string.
-		/// </summary>
-		private void Prepare () {
-			var tmp = src.Length;
-			src = src.Replace ("\r\n", "\n");
-			eolnix = tmp > src.Length;
 		}
 
 		/// <summary>
@@ -463,7 +451,7 @@ namespace libjsowl
 					
 					// Default
 					default:
-						log.Error.Write ("[Lexer] Unexpected character '{0}' at line {1}:{2}. Compilation failed.\n", PeekChar (), line, lpos);
+						this.Error ("[Lexer] Unexpected character '{0}' at line {1}:{2}. Compilation failed.\n", PeekChar (), line, lpos);
 						terminate ("The lexical analysis failed because it hit an unimplemented character.");
 						return;
 					}
@@ -555,9 +543,9 @@ namespace libjsowl
 		/// Logs the last token added to the token list.
 		/// </summary>
 		private void LogToken () {
-			if (verbose)
-				Console.Out.WriteLine ("[Lexer] {2:000}:{3:000}\tToken {0}\t{1}",
-					tokens.Last ().name.PadRight (25, ' '), tokens.Last ().ToString ().Trim (' ', '\n', '\t'), line, lpos);
+			var tk_desc = tokens.Last ().name.PadRight (25, ' ');
+			var tk_value = tokens.Last ().ToString ().Trim (' ', '\t', '\n');
+			this.Log ("{0:000}:{1:000}\tToken {2}\t{3}", line, lpos, tk_desc, tk_value);
 		}
 
 		/// <summary>

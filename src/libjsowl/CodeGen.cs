@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace libjsowl
 {
-	public class CodeGen : ICompilerBlock
+	public class CodeGen : ICompilerComponent
 	{
 		// Private fields
 		private string output = string.Empty;
