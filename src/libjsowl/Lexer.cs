@@ -13,10 +13,7 @@ namespace libjsowl
 	public class Lexer : ICompilerComponent, ILoggable, ITerminatable
 	{
 		// Private fields
-		private int pos;
-		private int line;
-		private int lpos;
-		private string src;
+		private SourceStream source;
 
 		// Public properties
 		public List<Token> tokens { get; private set; }
@@ -45,10 +42,7 @@ namespace libjsowl
 		/// </summary>
 		public Lexer (CompilerOptions options, Log logger, TerminationCallback terminator)
 		{
-			this.pos = -1;
-			this.line = 1;
-			this.lpos = 0;
-			this.src = string.Empty;
+			this.source = new SourceStream ();
 			this.tokens = new List<Token> ();
 			this.options = options;
 			this.Logger = logger;
@@ -59,8 +53,8 @@ namespace libjsowl
 		/// Tokenizes the given source code string.
 		/// </summary>
 		/// <param name="source">Source.</param>
-		public void FeedSource (string source) {
-			src = source;
+		public void FeedSource (string src) {
+			source.SetSource (src);
 			Scan ();
 		}
 
@@ -76,110 +70,110 @@ namespace libjsowl
 		/// Tokenizes the source string.
 		/// </summary>
 		private void Scan () {
-			while (pos < src.Length && Peek () != -1) {
-				EatWhitespaces ();
+			while (source.Position < source.Length && source.Peek () != -1) {
+				source.EatWhitespaces ();
 
-				if (PeekChar () == '\n') {
-					Consume ();
-					tokens.Add (new TEOL (++line));
-					lpos = 0;
-				} else if (PeekChar () == '\"' || PeekChar () == '\'') {
+				if (source.PeekChar () == '\n') {
+					source.Consume ();
+					tokens.Add (new TEOL (++source.Line));
+					source.Column = 0;
+				} else if (source.PeekChar () == '\"' || source.PeekChar () == '\'') {
 					tokens.Add (ScanString ());
 					LogToken ();
-				} else if (char.IsLetter (PeekChar ()) || PeekChar () == '$' || PeekChar () == '_') {
+				} else if (char.IsLetter (source.PeekChar ()) || source.PeekChar () == '$' || source.PeekChar () == '_') {
 					tokens.Add (ScanIdentifier ());
 					LogToken ();
-				} else if (PeekChar () == '/' && PeekChar (2) == '/') {
+				} else if (source.PeekChar () == '/' && source.PeekChar (2) == '/') {
 					tokens.Add (ScanComment ());
 					LogToken ();
-				} else if (PeekChar () == '/' && PeekChar (2) == '*') {
+				} else if (source.PeekChar () == '/' && source.PeekChar (2) == '*') {
 					tokens.Add (ScanMultilineComment ());
 					LogToken ();
-				} else if (char.IsDigit (PeekChar ())) {
+				} else if (char.IsDigit (source.PeekChar ())) {
 					tokens.Add (ScanNumber ());
 					LogToken ();
 				} else {
-					switch (PeekChar ()) {
+					switch (source.PeekChar ()) {
 					case '.':
-						Consume ();
-						tokens.Add (new TDot (line));
+						source.Consume ();
+						tokens.Add (new TDot (source.Line));
 						break;
 
 					// Comma operator
 					case ',':
-						Consume ();
-						tokens.Add (new TComma (line));
+						source.Consume ();
+						tokens.Add (new TComma (source.Line));
 						break;
 					
 					// Colon operator
 					case ':':
-						Consume ();
-						tokens.Add (new TColon (line));
+						source.Consume ();
+						tokens.Add (new TColon (source.Line));
 						break;
 					
 					// End of instruction
 					case ';':
-						Consume ();
-						tokens.Add (new TSemi (line));
+						source.Consume ();
+						tokens.Add (new TSemi (source.Line));
 						break;
 					
 					// Grouping operators
 					case '(':
-						Consume ();
-						tokens.Add (new TParL (line));
+						source.Consume ();
+						tokens.Add (new TParL (source.Line));
 						LogToken ();
 						break;
 					case ')':
-						Consume ();
-						tokens.Add (new TParR (line));
+						source.Consume ();
+						tokens.Add (new TParR (source.Line));
 						LogToken ();
 						break;
 					
 					// Brackets
 					case '{':
-						Consume ();
-						tokens.Add (new TCBrL (line));
+						source.Consume ();
+						tokens.Add (new TCBrL (source.Line));
 						LogToken ();
 						break;
 					case '}':
-						Consume ();
-						tokens.Add (new TCBrR (line));
+						source.Consume ();
+						tokens.Add (new TCBrR (source.Line));
 						LogToken ();
 						break;
 					case '[':
-						Consume ();
-						tokens.Add (new TBrL (line));
+						source.Consume ();
+						tokens.Add (new TBrL (source.Line));
 						LogToken ();
 						break;
 					case ']':
-						Consume ();
-						tokens.Add (new TBrR (line));
+						source.Consume ();
+						tokens.Add (new TBrR (source.Line));
 						LogToken ();
 						break;
 					
 					// Assignment operator
 					case '=':
-						Consume ();
+						source.Consume ();
 
 						// Equals operator
-						if (PeekChar () == '=') {
-							Consume ();
+						if (source.PeekChar () == '=') {
+							source.Consume ();
 
 							// Strict equals operator
-							if (PeekChar () == '=') {
-								Consume ();
-								tokens.Add (new TLogSeq (line));
+							if (source.PeekChar () == '=') {
+								source.Consume ();
+								tokens.Add (new TLogSeq (source.Line));
 							}
 
 							// Equals operator
 							else {
-								tokens.Add (new TLogEq (line));
+								tokens.Add (new TLogEq (source.Line));
 							}
 						}
 
 						// Assignment operator
 						else {
-							tokens.Add (new TAssign (line));
+							tokens.Add (new TAssign (source.Line));
 						}
 
 						LogToken ();
@@ -187,23 +181,23 @@ namespace libjsowl
 					
 					// Addition
 					case '+':
-						Consume ();
+						source.Consume ();
 
 						// Addition w/ assignment
-						if (PeekChar () == '=') {
-							Consume ();
-							tokens.Add (new TAsAdd (line));
+						if (source.PeekChar () == '=') {
+							source.Consume ();
+							tokens.Add (new TAsAdd (source.Line));
 						}
 
 						// Increment
-						else if (PeekChar () == '+') {
-							Consume ();
-							tokens.Add (new TArInc (line));
+						else if (source.PeekChar () == '+') {
+							source.Consume ();
+							tokens.Add (new TArInc (source.Line));
 						}
 
 						// Addition
 						else {
-							tokens.Add (new TArAdd (line));
+							tokens.Add (new TArAdd (source.Line));
 						}
 
 						LogToken ();
@@ -211,23 +205,23 @@ namespace libjsowl
 					
 					// Subtraction
 					case '-':
-						Consume ();
+						source.Consume ();
 
 						// Subtraction w/ assignment
-						if (PeekChar () == '=') {
-							Consume ();
-							tokens.Add (new TAsSub (line));
+						if (source.PeekChar () == '=') {
+							source.Consume ();
+							tokens.Add (new TAsSub (source.Line));
 						}
 
 						// Decrement
-						else if (PeekChar () == '-') {
-							Consume ();
-							tokens.Add (new TArDec (line));
+						else if (source.PeekChar () == '-') {
+							source.Consume ();
+							tokens.Add (new TArDec (source.Line));
 						}
 
 						// Subtraction
 						else {
-							tokens.Add (new TArSub (line));
+							tokens.Add (new TArSub (source.Line));
 						}
 
 						LogToken ();
@@ -235,17 +229,17 @@ namespace libjsowl
 					
 					// Multiplication
 					case '*':
-						Consume ();
+						source.Consume ();
 
 						// Multiplication w/ assignment
-						if (PeekChar () == '=') {
-							Consume ();
-							tokens.Add (new TAsMul (line));
+						if (source.PeekChar () == '=') {
+							source.Consume ();
+							tokens.Add (new TAsMul (source.Line));
 						}
 
 						// Multiplication
 						else {
-							tokens.Add (new TArMul (line));
+							tokens.Add (new TArMul (source.Line));
 						}
 
 						LogToken ();
@@ -253,17 +247,17 @@ namespace libjsowl
 					
 					// Division
 					case '/':
-						Consume ();
+						source.Consume ();
 
 						// Division w/ assignment
-						if (PeekChar () == '=') {
-							Consume ();
-							tokens.Add (new TAsDiv (line));
+						if (source.PeekChar () == '=') {
+							source.Consume ();
+							tokens.Add (new TAsDiv (source.Line));
 						}
 
 						// Division
 						else {
-							tokens.Add (new TArDiv (line));
+							tokens.Add (new TArDiv (source.Line));
 						}
 
 						LogToken ();
@@ -271,23 +265,23 @@ namespace libjsowl
 					
 					// Bitwise or
 					case '|':
-						Consume ();
+						source.Consume ();
 
 						// Logical or
-						if (PeekChar () == '|') {
-							Consume ();
-							tokens.Add (new TLogOr (line));
+						if (source.PeekChar () == '|') {
+							source.Consume ();
+							tokens.Add (new TLogOr (source.Line));
 						}
 
 						// Bitwise or w/ assignment
-						else if (PeekChar () == '=') {
-							Consume ();
-							tokens.Add (new TAsOr (line));
+						else if (source.PeekChar () == '=') {
+							source.Consume ();
+							tokens.Add (new TAsOr (source.Line));
 						}
 
 						// Bitwise or
 						else {
-							tokens.Add (new TBitOr (line));
+							tokens.Add (new TBitOr (source.Line));
 						}
 
 						LogToken ();
@@ -295,23 +289,23 @@ namespace libjsowl
 					
 					// Bitwise and
 					case '&':
-						Consume ();
+						source.Consume ();
 
 						// Logical and
-						if (PeekChar () == '&') {
-							Consume ();
-							tokens.Add (new TLogAnd (line));
+						if (source.PeekChar () == '&') {
+							source.Consume ();
+							tokens.Add (new TLogAnd (source.Line));
 						}
 
 						// Bitwise and w/ assignment
-						else if (PeekChar () == '=') {
-							Consume ();
-							tokens.Add (new TAsAnd (line));
+						else if (source.PeekChar () == '=') {
+							source.Consume ();
+							tokens.Add (new TAsAnd (source.Line));
 						}
 
 						// Bitwise and
 						else {
-							tokens.Add (new TBitAnd (line));
+							tokens.Add (new TBitAnd (source.Line));
 						}
 
 						LogToken ();
@@ -319,33 +313,33 @@ namespace libjsowl
 					
 					// Lower than
 					case '<':
-						Consume ();
+						source.Consume ();
 
 						// Bitwise shift left
-						if (PeekChar () == '<') {
-							Consume ();
+						if (source.PeekChar () == '<') {
+							source.Consume ();
 
 							// Bitwise shift left w/ assignment
-							if (PeekChar () == '=') {
-								Consume ();
-								tokens.Add (new TAsShL (line));
+							if (source.PeekChar () == '=') {
+								source.Consume ();
+								tokens.Add (new TAsShL (source.Line));
 							}
 
 							// Bitwise shift left
 							else {
-								tokens.Add (new TBitShL (line));
+								tokens.Add (new TBitShL (source.Line));
 							}
 						}
 
 						// Lower than or equal to
-						else if (PeekChar () == '=') {
-							Consume ();
-							tokens.Add (new TLogLtE (line));
+						else if (source.PeekChar () == '=') {
+							source.Consume ();
+							tokens.Add (new TLogLtE (source.Line));
 						}
 
 						// Lower than
 						else {
-							tokens.Add (new TLogLt (line));
+							tokens.Add (new TLogLt (source.Line));
 						}
 
 						LogToken ();
@@ -353,33 +347,33 @@ namespace libjsowl
 					
 					// Greater then
 					case '>':
-						Consume ();
+						source.Consume ();
 
 						// Bitwise shift right
-						if (PeekChar () == '>') {
-							Consume ();
+						if (source.PeekChar () == '>') {
+							source.Consume ();
 
 							// Bitwise shift right w/ assignment
-							if (PeekChar () == '=') {
-								Consume ();
-								tokens.Add (new TAsShR (line));
+							if (source.PeekChar () == '=') {
+								source.Consume ();
+								tokens.Add (new TAsShR (source.Line));
 							}
 
 							// Bitwise shift right
 							else {
-								tokens.Add (new TBitShR (line));
+								tokens.Add (new TBitShR (source.Line));
 							}
 						}
 
 						// Greater then or equal to
-						else if (PeekChar () == '=') {
-							Consume ();
-							tokens.Add (new TLogGtE (line));
+						else if (source.PeekChar () == '=') {
+							source.Consume ();
+							tokens.Add (new TLogGtE (source.Line));
 						}
 
 						// Greater then
 						else {
-							tokens.Add (new TLogGt (line));
+							tokens.Add (new TLogGt (source.Line));
 						}
 
 						LogToken ();
@@ -387,17 +381,17 @@ namespace libjsowl
 					
 					// Bitwise not
 					case '~':
-						Consume ();
+						source.Consume ();
 
 						// Bitwise not w/ assignment
-						if (PeekChar () == '=') {
-							Consume ();
-							tokens.Add (new TAsNot (line));
+						if (source.PeekChar () == '=') {
+							source.Consume ();
+							tokens.Add (new TAsNot (source.Line));
 						}
 
 						// Bitwise not
 						else {
-							tokens.Add (new TBitNot (line));
+							tokens.Add (new TBitNot (source.Line));
 						}
 
 						LogToken ();
@@ -405,17 +399,17 @@ namespace libjsowl
 					
 					// Bitwise xor
 					case '^':
-						Consume ();
+						source.Consume ();
 
 						// Bitwise xor w/ assignment
-						if (PeekChar () == '=') {
-							Consume ();
-							tokens.Add (new TAsXor (line));
+						if (source.PeekChar () == '=') {
+							source.Consume ();
+							tokens.Add (new TAsXor (source.Line));
 						}
 
 						// Bitwise xor
 						else {
-							tokens.Add (new TBitXor (line));
+							tokens.Add (new TBitXor (source.Line));
 						}
 
 						LogToken ();
@@ -423,27 +417,27 @@ namespace libjsowl
 					
 					// Logical not
 					case '!':
-						Consume ();
+						source.Consume ();
 
 						// Not equal
-						if (PeekChar () == '=') {
-							Consume ();
+						if (source.PeekChar () == '=') {
+							source.Consume ();
 
 							// Not strict equal
-							if (PeekChar () == '=') {
-								Consume ();
-								tokens.Add (new TLogNSeq (line));
+							if (source.PeekChar () == '=') {
+								source.Consume ();
+								tokens.Add (new TLogNSeq (source.Line));
 							}
 
 							// Not equal
 							else {
-								tokens.Add (new TLogNeq (line));
+								tokens.Add (new TLogNeq (source.Line));
 							}
 						}
 
 						// Logical not
 						else {
-							tokens.Add (new TLogNot (line));
+							tokens.Add (new TLogNot (source.Line));
 						}
 
 						LogToken ();
@@ -451,20 +445,20 @@ namespace libjsowl
 
 					// Ternary operator
 					case '?':
-						Consume ();
-						tokens.Add (new TLogTernary (line));
+						source.Consume ();
+						tokens.Add (new TLogTernary (source.Line));
 						LogToken ();
 						break;
 					
 					// Default
 					default:
-						this.Error ("[Lexer] Unexpected character '{0}' at line {1}:{2}. Compilation failed.\n", PeekChar (), line, lpos);
+						this.Error ("[Lexer] Unexpected character '{0}' at source.Line {1}:{2}. Compilation failed.\n", source.PeekChar (), source.Line, source.Column);
 						terminate ("The lexical analysis failed because it hit an unimplemented character.");
 						return;
 					}
 				}
 
-				lpos++;
+				source.Column++;
 			}
 		}
 
@@ -473,14 +467,14 @@ namespace libjsowl
 		/// </summary>
 		/// <returns>The string.</returns>
 		private TString ScanString () {
-			Consume ();
+			source.Consume ();
 			StringBuilder sb = new StringBuilder ();
-			while (PeekChar () != '\"' && PeekChar () != '\'') {
-				sb.Append (ReadChar ());
-				lpos++;
+			while (source.PeekChar () != '\"' && source.PeekChar () != '\'') {
+				sb.Append (source.ReadChar ());
+				source.Column++;
 			}
-			Consume ();
-			return new TString (line, sb.ToString ());
+			source.Consume ();
+			return new TString (source.Line, sb.ToString ());
 		}
 
 		/// <summary>
@@ -489,12 +483,12 @@ namespace libjsowl
 		/// <returns>The identifier.</returns>
 		private TIdent ScanIdentifier () {
 			StringBuilder sb = new StringBuilder ();
-			sb.Append (ReadChar ());
-			while (char.IsLetterOrDigit (PeekChar ()) || PeekChar () == '_' || PeekChar () == '$') {
-				sb.Append (ReadChar ());
-				lpos++;
+			sb.Append (source.ReadChar ());
+			while (char.IsLetterOrDigit (source.PeekChar ()) || source.PeekChar () == '_' || source.PeekChar () == '$') {
+				sb.Append (source.ReadChar ());
+				source.Column++;
 			}
-			return new TIdent (line, sb.ToString ());
+			return new TIdent (source.Line, sb.ToString ());
 		}
 
 		/// <summary>
@@ -503,13 +497,13 @@ namespace libjsowl
 		/// <returns>The number.</returns>
 		private TNumber ScanNumber () {
 			StringBuilder sb = new StringBuilder ();
-			sb.Append (ReadChar ());
-			lpos++;
-			while (char.IsNumber (PeekChar ()) || PeekChar () == 'E' || PeekChar () == 'x' || PeekChar () == '.') {
-				sb.Append (ReadChar ());
-				lpos++;
+			sb.Append (source.ReadChar ());
+			source.Column++;
+			while (char.IsNumber (source.PeekChar ()) || source.PeekChar () == 'E' || source.PeekChar () == 'x' || source.PeekChar () == '.') {
+				sb.Append (source.ReadChar ());
+				source.Column++;
 			}
-			return new TNumber (line, sb.ToString ());
+			return new TNumber (source.Line, sb.ToString ());
 		}
 
 		/// <summary>
@@ -519,31 +513,31 @@ namespace libjsowl
 		private TComment ScanComment () {
 			StringBuilder sb = new StringBuilder ();
 
-			Consume (2);
-			while (PeekChar () != '\n') {
-				sb.Append (ReadChar ());
+			source.Consume (2);
+			while (source.PeekChar () != '\n') {
+				sb.Append (source.ReadChar ());
 			}
 
-			return new TComment (line, sb.ToString ());
+			return new TComment (source.Line, sb.ToString ());
 		}
 
 		/// <summary>
-		/// Tokenizes a multiline comment.
+		/// Tokenizes a multisource.Line comment.
 		/// </summary>
-		/// <returns>The multiline comment.</returns>
+		/// <returns>The multisource.Line comment.</returns>
 		private TMultilineComment ScanMultilineComment () {
 			StringBuilder sb = new StringBuilder ();
 
-			Consume (2);
+			source.Consume (2);
 			while (true) {
-				if (PeekChar () == '*' && PeekChar (2) == '/') {
+				if (source.PeekChar () == '*' && source.PeekChar (2) == '/') {
 					break;
 				}
-				sb.Append (ReadChar ());
+				sb.Append (source.ReadChar ());
 			}
-			Consume (2);
+			source.Consume (2);
 
-			return new TMultilineComment (line, sb.ToString ());
+			return new TMultilineComment (source.Line, sb.ToString ());
 		}
 
 		/// <summary>
@@ -552,66 +546,7 @@ namespace libjsowl
 		private void LogToken () {
 			var tk_desc = tokens.Last ().name.PadRight (25, ' ');
 			var tk_value = tokens.Last ().ToString ().Trim (' ', '\t', '\n');
-			this.Log ("{0:000}:{1:000}\tToken {2}\t{3}", line, lpos, tk_desc, tk_value);
-		}
-
-		/// <summary>
-		/// Peeks at the next character in the source stream
-		/// without incrementing the position.
-		/// </summary>
-		/// <returns>The next character in the source stream.</returns>
-		/// <param name="lookahead">Lookahead.</param>
-		private int Peek (int lookahead = 1) {
-			return pos < src.Length - lookahead ? (int)src [pos + lookahead] : -1;
-		}
-
-		/// <summary>
-		/// Peeks at the next character in the source stream
-		/// without incrementing the position.
-		/// </summary>
-		/// <returns>The next character in the source stream.</returns>
-		/// <param name="lookahead">Lookahead.</param>
-		private char PeekChar (int lookahead = 1) {
-			return (char)Peek (lookahead);
-		}
-
-		/// <summary>
-		/// Reads a character from the source stream
-		/// and increments the position.
-		/// </summary>
-		/// <returns>The next character in the source stream.</returns>
-		private int Read () {
-			lpos++;
-			return pos < src.Length - 1 ? (int)src [++pos] : -1;
-		}
-
-
-		/// <summary>
-		/// Reads a character from the source stream
-		/// and increments the position
-		/// </summary>
-		/// <returns>The next character in the source stream.</returns>
-		private char ReadChar () {
-			return (char)Read ();
-		}
-
-		/// <summary>
-		/// Increments the position by <paramref name="count"/>
-		/// without returning anything. 
-		/// </summary>
-		/// <param name="count">Count.</param>
-		private void Consume (int count = 1) {
-			pos += count;
-			lpos += count;
-		}
-
-		/// <summary>
-		/// Increments the position until it hits a non-whitespace character.
-		/// </summary>
-		private void EatWhitespaces () {
-			while (PeekChar () != '\n' && char.IsWhiteSpace (PeekChar ())) {
-				Consume ();
-			}
+			this.Log ("{0:000}:{1:000}\tToken {2}\t{3}", source.Line, source.Column, tk_desc, tk_value);
 		}
 	}
 }

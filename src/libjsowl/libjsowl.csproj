@@ -115,6 +115,7 @@
     <Compile Include="Syntax\Operators\Arithmetics\TArMul.cs" />
     <Compile Include="Syntax\Operators\Arithmetics\TArSub.cs" />
     <Compile Include="Syntax\Operators\Logical\TLogTernary.cs" />
+    <Compile Include="SourceStream.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
