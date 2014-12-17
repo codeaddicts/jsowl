@@ -7,7 +7,6 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>jsowl</RootNamespace>
     <AssemblyName>jsowl</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
