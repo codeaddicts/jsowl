@@ -10,9 +10,6 @@ unimplemented
 >>>=
 unimplemented
 
-? expr1 : expr2
-unimplemented
-
 =====================
 Brackets
 =====================
@@ -168,6 +165,9 @@ TLogNeq
 
 !==
 TLogNSeq
+
+?::
+TLogTernary
 
 =====================
 Misc
