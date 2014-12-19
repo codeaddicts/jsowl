@@ -6,38 +6,29 @@ It's much cleaner than JavaScript, supports classes and is generally a lot more 
 
 Just convice yourself:
 ```scala
-def Hello {
-	let test = new Sample ();
-    test.Hello ();
-}
+def main {
+	let test = new Test ();
+	test.Say ("Hello, World!");
 
-class Sample {
-	
-	// Public method
-	public def Hello {
-    	Say ("Hello, World!");
-    }
-    
-    // Private method
-    def Say (something) {
-    	alert (something);
-    }
-    
+	class Test {
+		public def Say (msg) {
+			alert (msg);
+		}
+	}
 }
 ```
 versus
 ```javascript
-function Hello () {
-	var test = new Sample ();
-    test.Hello ();
-}
-
-function Sample () {
-	this.Hello = function () {
-    	Say ("Hello, World!");
-    }
-    function Say (something) {
-    	alert (something);
-    }
-}
+(function () {
+	function main () {
+		var test = new Test ();
+		test.Say ('Hello, World!');
+		function Test () {
+			this.Say = function (msg) {
+				alert (msg);
+			}
+		}
+	}
+	main ();
+}) ();
 ```
